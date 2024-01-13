@@ -1,0 +1,228 @@
+                                                               ################## CONTRIBUTION OF CS-22002 #####################
+
+
+
+
+
+                                                                              1) INTEGRATION WITH OpenWeatherMap API:
+                                                                                -------------------------------------                                                                       
+
+#include <curl/curl.h>
+
+// Function to make API request to OpenWeatherMap
+void requestOpenWeatherMapAPI(const char *lat, const char *lon, const char *api_key) {
+    CURL *curl = curl_easy_init();
+
+    if (curl) {
+        // Construct API URL
+        char url[256];
+        snprintf(url, sizeof(url), "https://api.openweathermap.org/data/2.5/weather?lat=%s&lon=%s&appid=%s", lat, lon, api_key);
+
+        // Set up curl options for the request
+        curl_easy_setopt(curl, CURLOPT_URL, url);
+
+        // Perform the HTTP request
+        CURLcode res = curl_easy_perform(curl);
+
+        if (res != CURLE_OK) {
+            fprintf(stderr, "API request failed: %s\n", curl_easy_strerror(res));
+        }
+
+        // Cleanup
+        curl_easy_cleanup(curl);
+    }
+}
+
+
+                                                                            2) ERROR HANDLING MECHANISMS FOR API REQUEST:
+                                                                              -------------------------------------------
+
+if (res != CURLE_OK) {
+    fprintf(stderr, "API request failed: %s\n", curl_easy_strerror(res));
+    // Additional error handling logic as needed
+}
+
+
+                                                                            3) DOCUMENTATION ON API KEY AUTENTICATION:
+                                                                              ----------------------------------------
+
+// Instructions for obtaining and using API keys
+// - Visit OpenWeatherMap website to create an account and obtain an API key
+// - Replace the 'YOUR_API_KEY' placeholder below with the obtained API key
+#define OPENWEATHERMAP_API_KEY "YOUR_API_KEY"
+
+
+                                                                            4) CRONTAB AUTOMATION:
+                                                                               -------------------
+
+// crontab entry for scheduling a task to run the weather analysis program every day at 12 AM
+// 1 2 * * * /path/to/your/weather/analysis/program
+
+
+
+                                                               ##################### CONTRIBUTION OF CS-22008 ######################
+
+
+
+
+
+                                                                            1) IMPROVED ClculateAverage FUNCTION:
+                                                                              ----------------------------------
+
+void calculateAverage(FILE *processedFile, FILE *reportFile) {
+    // ... (existing code for summing up weather parameters)
+
+    if (count > 0) {
+        // ... (existing code for calculating averages)
+
+        fprintf(reportFile, "\nAverage Data\n");
+        fprintf(reportFile, "-------------\n");
+        // ... (existing code for printing average values)
+
+        // Improved section for handling diverse weather parameters
+        fprintf(reportFile, "\nWeather Parameters\n");
+        fprintf(reportFile, "-------------------\n");
+
+        // Add more weather parameters as needed
+        // fprintf(reportFile, "Average ParameterX: %.2f\n", avgParameterX);
+        // fprintf(reportFile, "Average ParameterY: %.2f\n", avgParameterY);
+
+        fprintf(reportFile, "\nWeather Comparison\n");
+        fprintf(reportFile, "-------------------\n");
+        // ... (existing code for weather comparison)
+    } else {
+        fprintf(reportFile, "No data available for calculation\n");
+    }
+}
+
+
+                                                                          2) ADDED WEATHER COMPARISON SECTION TO THE REPORT:
+                                                                             ----------------------------------------------
+
+fprintf(reportFile, "\nWeather Comparison\n");
+fprintf(reportFile, "-------------------\n");
+
+if (avgTemp > 25.0) {
+    fprintf(reportFile, "   - The temperature is higher than usual.\n");
+} else if (avgTemp < 10.0) {
+    fprintf(reportFile, "   - The temperature is lower than usual.\n");
+} else {
+    fprintf(reportFile, "   - The temperature is within a normal range.\n");
+}
+
+// ... (similar blocks for other parameters)
+
+fprintf(reportFile, "Weather Comparison Complete\n");
+
+
+                                                                         3) CREATION OF THE ANALYZE FUNCTION:
+                                                                            ---------------------------------
+
+void analyze(const char *response, FILE *reportFile) {
+    // ... (existing code for extracting specific weather parameters)
+
+    fprintf(reportFile, "\nWeather Analysis Report\n");
+    fprintf(reportFile, "------------------------\n");
+
+    fprintf(reportFile, "Temperature: %.2f degrees Celsius\n", temp);
+    fprintf(reportFile, "Humidity: %d%%\n", hum);
+    // ... (similar blocks for other parameters)
+
+    // Additional in-depth analysis for specific weather parameters
+    if (temp > 25.0) {
+        fprintf(reportFile, "   - It feels quite warm with a high temperature.\n");
+    } else if (temp < 10.0) {
+        fprintf(reportFile, "   - It feels cold with a low temperature.\n");
+    } else {
+        fprintf(reportFile, "   - The temperature is within a comfortable range.\n");
+    }
+
+    // ... (similar blocks for other parameters)
+
+    fprintf(reportFile, "Analysis Report Complete\n");
+}
+
+
+
+                                                              ##################### CONTRIBUTION OF CS-22012 ####################
+  
+
+
+                                                                              1) FILE I/O OPERATIONS: 
+                                                                                 -------------------
+
+void saveToFile(const char *data, const char *filename) {
+    FILE *file = fopen(filename, "w");
+    if (file == NULL) {
+        fprintf(stderr, "Error: Unable to open file %s for writing\n", filename);
+        return;
+    }
+
+    if (fprintf(file, "%s", data) < 0) {
+        fprintf(stderr, "Error: Unable to write data to file %s\n", filename);
+    }
+
+    fclose(file);
+}
+
+char *readFromFile(const char *filename) {
+    FILE *file = fopen(filename, "r");
+    if (file == NULL) {
+        fprintf(stderr, "Error: Unable to open file %s for reading\n", filename);
+        return NULL;
+    }
+
+    fseek(file, 0, SEEK_END);
+    long file_size = ftell(file);
+    rewind(file);
+
+    char *content = malloc(file_size + 1);
+    if (content == NULL) {
+        fprintf(stderr, "Error: Unable to allocate memory for reading file %s\n", filename);
+        fclose(file);
+        return NULL;
+    }
+
+    if (fread(content, 1, file_size, file) != file_size) {
+        fprintf(stderr, "Error: Unable to read content from file %s\n", filename);
+        free(content);
+        fclose(file);
+        return NULL;
+    }
+
+    content[file_size] = '\0';
+
+    fclose(file);
+    return content;
+}
+
+                                                                     2) ENHANCED ERROR HANDLING AND LOGGING FOR FILE OPERATIONS:
+                                                                       --------------------------------------------------------
+
+if (file == NULL) {
+    fprintf(stderr, "Error: Unable to open file %s for writing\n", filename);
+    return;
+}
+
+if (fprintf(file, "%s", data) < 0) {
+    fprintf(stderr, "Error: Unable to write data to file %s\n", filename);
+}
+
+IMPLEMENTATION OF send_email FUNCTION:
+
+void send_email() {
+    CURL *emailCurl = curl_easy_init();
+
+    if (emailCurl) {
+        // ... (existing code)
+
+        CURLcode emailRes = curl_easy_perform(emailCurl);
+
+        if (emailRes != CURLE_OK) {
+            fprintf(stderr, "Email sending failed: %s\n", curl_easy_strerror(emailRes));
+        }
+
+        curl_slist_free_all(recipients);
+        curl_easy_cleanup(emailCurl);
+    }
+}
